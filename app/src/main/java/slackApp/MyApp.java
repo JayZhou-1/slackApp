@@ -19,6 +19,17 @@ public class MyApp {
             return ctx.ack(":wave: Hello!");
         });
 
+        app.command("/ping", (req, ctx) -> {
+            return ctx.ack(asBlocks(
+                    section(section -> section.text(markdownText(":wave: pong"))),
+                    actions(actions -> actions
+                            .elements(asElements(
+                                    button(b -> b.actionId("ping-again").text(plainText(pt -> pt.text("Ping"))).value("ping"))
+                            ))
+                    )
+            ));
+        });
+
         app.event(AppHomeOpenedEvent.class, (payload, ctx) -> {
             System.out.println("payload = " + payload);
             System.out.println("ctx = " + ctx);
