@@ -14,6 +14,11 @@ public class MyApp {
     public static void main(String[] args) throws Exception {
         var app = new App();
         // All the room in the world for your code
+
+        app.command("/hello", (req, ctx) -> {
+            return ctx.ack(":wave: Hello!");
+        });
+
         app.event(AppHomeOpenedEvent.class, (payload, ctx) -> {
             System.out.println("payload = " + payload);
             System.out.println("ctx = " + ctx);
