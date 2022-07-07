@@ -7,6 +7,8 @@ import static com.slack.api.model.block.Blocks.*;
 import static com.slack.api.model.block.composition.BlockCompositions.*;
 import static com.slack.api.model.view.Views.*;
 import com.slack.api.model.event.AppHomeOpenedEvent;
+import com.slack.api.model.view.View;
+
 import static com.slack.api.model.block.element.BlockElements.*;
 
 
@@ -28,6 +30,24 @@ public class MyApp {
                             ))
                     )
             ));
+        });
+
+
+        app.globalShortcut("callback-id", (req, ctx) -> {
+            // Using the defualt singleton thread pool
+            app.executorService().submit(() -> {
+                // Do anything asynchronously here
+                try {
+                    ctx.client().viewsOpen(r -> r
+                            .triggerId(ctx.getTriggerId())
+                            .view(View.builder().build())
+                    );
+                } catch (Exception e) {
+                    // Error handling
+                }
+            });
+            // This line will be synchrously executed
+            return ctx.ack();
         });
 
         app.event(AppHomeOpenedEvent.class, (payload, ctx) -> {
