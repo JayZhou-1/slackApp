@@ -78,3 +78,12 @@ appConfig.setRequestVerificationEnabled(false); // the default is true
 
 App app = new App(appConfig);
 ```
+
+## todo 
+Slash Commands
+Interactive Components
+Modals
+Shortcuts: https://slack.dev/java-slack-sdk/guides/shortcuts
+App Home
+Events API
+App Distribution (OAuth Flow)
