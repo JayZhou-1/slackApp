@@ -79,7 +79,8 @@ appConfig.setRequestVerificationEnabled(false); // the default is true
 App app = new App(appConfig);
 ```
 
-## 
+## Modals 
+
 ## todo 
 * Slash Commands
 * Interactive Components
