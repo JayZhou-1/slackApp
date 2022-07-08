@@ -16,11 +16,21 @@ public class MyApp {
     public static void main(String[] args) throws Exception {
         var app = new App();
         // All the room in the world for your code
+        command_blockAction(app);
 
-        app.command("/hello", (req, ctx) -> {
-            return ctx.ack(":wave: Hello!");
-        });
+        addCommand(app);
+        addGlobalShortcut(app);
+        handleAppHomeOpenedEvent(app);
 
+        var server = new SlackAppServer(app);
+        server.start();
+    }
+
+    /**
+     * first use use command to trigger a button, then click it
+     * @param app
+     */
+    private static void command_blockAction(App app) {
         app.command("/ping", (req, ctx) -> {
             return ctx.ack(asBlocks(
                     section(section -> section.text(markdownText(":wave: pong"))),
@@ -32,24 +42,17 @@ public class MyApp {
             ));
         });
 
-
-        app.globalShortcut("callback-id", (req, ctx) -> {
-            // Using the defualt singleton thread pool
-            app.executorService().submit(() -> {
-                // Do anything asynchronously here
-                try {
-                    ctx.client().viewsOpen(r -> r
-                            .triggerId(ctx.getTriggerId())
-                            .view(View.builder().build())
-                    );
-                } catch (Exception e) {
-                    // Error handling
-                }
-            });
-            // This line will be synchrously executed
+        app.blockAction("ping-again", (req, ctx) -> {
+            String value = req.getPayload().getActions().get(0).getValue(); // "button's value"
+            if (req.getPayload().getResponseUrl() != null) {
+                // Post a message to the same channel if it's a block in a message
+                ctx.respond("You've sent " + value + " by clicking the button!");
+            }
             return ctx.ack();
         });
+    }
 
+    private static void handleAppHomeOpenedEvent(App app) {
         app.event(AppHomeOpenedEvent.class, (payload, ctx) -> {
             System.out.println("payload = " + payload);
             System.out.println("ctx = " + ctx);
@@ -74,9 +77,30 @@ public class MyApp {
 
             return ctx.ack();
         });
+    }
 
+    private static void addGlobalShortcut(App app) {
+        app.globalShortcut("callback-id", (req, ctx) -> {
+            // Using the defualt singleton thread pool
+            app.executorService().submit(() -> {
+                // Do anything asynchronously here
+                try {
+                    ctx.client().viewsOpen(r -> r
+                            .triggerId(ctx.getTriggerId())
+                            .view(View.builder().build())
+                    );
+                } catch (Exception e) {
+                    // Error handling
+                }
+            });
+            // This line will be synchrously executed
+            return ctx.ack();
+        });
+    }
 
-        var server = new SlackAppServer(app);
-        server.start();
+    private static void addCommand(App app) {
+        app.command("/hello", (req, ctx) -> {
+            return ctx.ack(":wave: Hello!");
+        });
     }
 }

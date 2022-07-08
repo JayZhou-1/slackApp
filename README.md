@@ -79,11 +79,31 @@ appConfig.setRequestVerificationEnabled(false); // the default is true
 App app = new App(appConfig);
 ```
 
+## 
 ## todo 
-Slash Commands
-Interactive Components
-Modals
-Shortcuts: https://slack.dev/java-slack-sdk/guides/shortcuts
-App Home
-Events API
-App Distribution (OAuth Flow)
+* Slash Commands
+* Interactive Components
+  * `app.blockAction`
+  * Buttons
+  * Select menus
+  * Multi-select menus
+  * Overflow menus
+  * Date pikers
+  * Time pickers
+  * Plain-text input fields
+  * Radio buttons
+  * Checkboxes
+* Modals
+* Shortcuts: https://slack.dev/java-slack-sdk/guides/shortcuts
+  * either global or message, 
+    * message shortcut can be used to select a message, then create a Jira tt
+* App Home
+* Events API
+* App Distribution (OAuth Flow)
+
+# surace 
+https://api.slack.com/surfaces
+* The Home tab
+* Modals
+* Messages
+* The continuum of app surfaces
