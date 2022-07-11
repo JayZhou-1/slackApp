@@ -259,11 +259,12 @@ public class MyApp {
                                 .blockId("agenda-block")
                                 .element(plainTextInput(pti -> pti.actionId("agenda-action").multiline(true)))
                                 .label(plainText(pt -> pt.text("Detailed Agenda").emoji(true)))
-                                .element(conversationsSelect(conv -> conv
-                                        .actionId("notification_conv_id")
-                                        .responseUrlEnabled(true)
-                                        .defaultToCurrentConversation(true)
-                                ))
+                                //TODO, add these to enable responseUrl to be able to publish message after model submission
+//                                .element(conversationsSelect(conv -> conv
+//                                        .actionId("notification_conv_id")
+//                                        .responseUrlEnabled(true)
+//                                        .defaultToCurrentConversation(true)
+//                                ))
                         )
 //                        ,
 //                        // Jay, added conversationsSelect element
