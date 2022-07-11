@@ -84,6 +84,7 @@ App app = new App(appConfig);
 ## todo 
 * Slash Commands
 * Interactive Components
+  * https://slack.dev/java-slack-sdk/guides/interactive-components 
   * `app.blockAction`
   * Buttons
   * Select menus
@@ -94,6 +95,7 @@ App app = new App(appConfig);
   * Plain-text input fields
   * Radio buttons
   * Checkboxes
+  * If you post a message using response_url, call `ctx.ack()` without arguments and use `ctx.respond()` to post a message.
 * Modals
 * Shortcuts: https://slack.dev/java-slack-sdk/guides/shortcuts
   * either global or message, 
