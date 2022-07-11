@@ -1,11 +1,13 @@
 package slackApp;
 
 import com.google.gson.Gson;
+import com.slack.api.app_backend.views.payload.ViewSubmissionPayload;
 import com.slack.api.bolt.App;
 import com.slack.api.bolt.jetty.SlackAppServer;
 
 import static com.slack.api.model.block.Blocks.*;
 import static com.slack.api.model.block.composition.BlockCompositions.*;
+import static com.slack.api.model.block.composition.BlockCompositions.markdownText;
 import static com.slack.api.model.view.Views.*;
 
 import com.slack.api.bolt.response.Response;
@@ -18,6 +20,7 @@ import com.slack.api.model.view.ViewState;
 import com.slack.api.util.json.GsonFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.slack.api.model.block.element.BlockElements.*;
@@ -83,6 +86,9 @@ public class MyApp {
         app.blockAction(category_selection_action, (req, ctx) -> {
             String categoryId = req.getPayload().getActions().get(0).getSelectedOption().getValue();
             View currentView = req.getPayload().getView();
+            System.out.println("==============================");
+            System.out.println("blockAction category_selection_action");
+            System.out.println("req.getResponseUrl() = " + req.getResponseUrl());
             System.out.println("currentView.getId() = " + currentView.getId());
 
             String privateMetadata = currentView.getPrivateMetadata();
@@ -96,21 +102,30 @@ public class MyApp {
         });
 
         app.viewSubmission("meeting-arrangement", (req, ctx) -> {
+            System.out.println("==============================");
+            System.out.println("viewSubmission meeting-arrangement");
             String privateMetadata = req.getPayload().getView().getPrivateMetadata();
-            Map<String, Map<String, ViewState.Value>> stateValues = req.getPayload().getView().getState().getValues();
-            String agenda = stateValues.get("agenda-block").get("agenda-action").getValue();
-            Map<String, String> errors = new HashMap<>();
-            if (agenda.length() <= 10) {
-                errors.put("agenda-block", "Agenda needs to be longer than 10 characters.");
-            }
-            if (!errors.isEmpty()) {
-                return ctx.ack(r -> r.responseAction("errors").errors(errors));
-            } else {
-                // TODO: may store the stateValues and privateMetadata
-                // Responding with an empty body means closing the modal now.
-                // If your app has next steps, respond with other response_action and a modal view.
-                return ctx.ack();
-            }
+            System.out.println("privateMetadata = " + privateMetadata);
+
+            List<ViewSubmissionPayload.ResponseUrl> responseURl = req.getPayload().getResponseUrls();
+            System.out.println("responseURl = " + responseURl);
+            ctx.respond("successfully published a message");
+            return ctx.ack();
+
+//            Map<String, Map<String, ViewState.Value>> stateValues = req.getPayload().getView().getState().getValues();
+//            String agenda = stateValues.get("agenda-block").get("agenda-action").getValue();
+//            Map<String, String> errors = new HashMap<>();
+//            if (agenda.length() <= 10) {
+//                errors.put("agenda-block", "Agenda needs to be longer than 10 characters.");
+//            }
+//            if (!errors.isEmpty()) {
+//                return ctx.ack(r -> r.responseAction("errors").errors(errors));
+//            } else {
+//                // TODO: may store the stateValues and privateMetadata
+//                // Responding with an empty body means closing the modal now.
+//                // If your app has next steps, respond with other response_action and a modal view.
+//                return ctx.ack();
+//            }
         });
     }
 
@@ -244,7 +259,24 @@ public class MyApp {
                                 .blockId("agenda-block")
                                 .element(plainTextInput(pti -> pti.actionId("agenda-action").multiline(true)))
                                 .label(plainText(pt -> pt.text("Detailed Agenda").emoji(true)))
+                                .element(conversationsSelect(conv -> conv
+                                        .actionId("notification_conv_id")
+                                        .responseUrlEnabled(true)
+                                        .defaultToCurrentConversation(true)
+                                ))
                         )
+//                        ,
+//                        // Jay, added conversationsSelect element
+//                        section(
+//                                section -> section
+//                                        .blockId("my section")
+//                                        .text(markdownText("my text"))
+//                                        .accessory(conversationsSelect(conv -> conv
+//                                                .actionId("notification_conv_id")
+//                                                .responseUrlEnabled(true)
+//                                                .defaultToCurrentConversation(true)
+//                                        ))
+//                        )
                 ))
         );
     }
